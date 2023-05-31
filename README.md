@@ -8,10 +8,10 @@
 ## Squad Select
 Three windows. Each lets you customize or randomize the soldiers you play.
 ## Game Phase
-Square Grid. Rotated if possible.
-Premade or generated (procedurally) levels.
-Soldiers spawn in designated position.
-Alien are picked at random and spawned in appointed location.
+Square Grid. Rotated if possible.  
+Premade or generated (procedurally) levels.  
+Soldiers spawn in designated position.  
+Alien are picked at random and spawned in appointed location.  
 
 Every character and enemy have speed which allows us to create an Action Queue.
 
@@ -35,10 +35,10 @@ Enemies can: shoot, special shoot (can be customizable depending on which type o
 - Personality (Timid, Brave, Resilient)
 - Equipment
 
-Depending on a Class (Scout, Sniper, Technician) Soldier will have different abilities.
-Scout - Sword Strike
-Sniper - No range on shooting
-Technician - Healing bot
+Depending on a Class (Scout, Sniper, Technician) Soldier will have different abilities.  
+Scout - Sword Strike  
+Sniper - No range on shooting  
+Technician - Healing bot  
 
 ### Alien
 - HP
