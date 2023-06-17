@@ -30,17 +30,17 @@ while running:
     if pygame.mouse.get_pressed():
         menu_option_vec = 18
 
-        font = pygame.font.SysFont(None, 16)
-        img = font.render(f'Country: Poland', True, "blue")
-        screen.blit(img, (base_x + (vec) + (300/2)-16, base_y+(500/2)))
+        font = pygame.font.SysFont(None, 24)
+        img = font.render(f'Nationality: Polish', True, "blue")
+        screen.blit(img, (base_x + (vec) + (300/2)-72, base_y+(500/2)))
 
-        font = pygame.font.SysFont(None, 16)
-        img = font.render('there', True, "blue")
-        screen.blit(img, (base_x + (vec) + (300/2)-16, base_y+(500/2) + (menu_option_vec)))
+        font = pygame.font.SysFont(None, 24)
+        img = font.render(f'Personality: Timid', True, "blue")
+        screen.blit(img, (base_x + (vec) + (300/2)-72, base_y+(500/2) + (menu_option_vec)))
 
-        font = pygame.font.SysFont(None, 16)
-        img = font.render('lads', True, "blue")
-        screen.blit(img, (base_x + (vec) + (300/2)-16, base_y+(500/2) + (menu_option_vec*2)))
+        font = pygame.font.SysFont(None, 24)
+        img = font.render(f'Class: Ranger', True, "blue")
+        screen.blit(img, (base_x + (vec) + (300/2)-72, base_y+(500/2) + (menu_option_vec*2)))
         # pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
     
 
