@@ -7,6 +7,7 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -16,6 +17,32 @@ while running:
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("purple")
+
+    base_x = 128
+    base_y = 64
+    vec = 364
+    pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
+    pygame.draw.rect(screen, "black", [base_x + (vec), base_y, 300, 500], 4)
+    pygame.draw.rect(screen, "black", [base_x + 2*(vec), base_y, 300, 500], 4)
+    pygame.draw.line(screen, "red", [640, 0], [640, 720], 1)
+
+
+    if pygame.mouse.get_pressed():
+        menu_option_vec = 18
+
+        font = pygame.font.SysFont(None, 16)
+        img = font.render(f'Country: Poland', True, "blue")
+        screen.blit(img, (base_x + (vec) + (300/2)-16, base_y+(500/2)))
+
+        font = pygame.font.SysFont(None, 16)
+        img = font.render('there', True, "blue")
+        screen.blit(img, (base_x + (vec) + (300/2)-16, base_y+(500/2) + (menu_option_vec)))
+
+        font = pygame.font.SysFont(None, 16)
+        img = font.render('lads', True, "blue")
+        screen.blit(img, (base_x + (vec) + (300/2)-16, base_y+(500/2) + (menu_option_vec*2)))
+        # pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
+    
 
     # RENDER YOUR GAME HERE
 
