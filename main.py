@@ -58,6 +58,9 @@ def trait_picker_scene():
     spacing = 18
     y_vec = 50
 
+    
+    # render the profile picture of a character
+    
 
     # render fonts for the customization of a character
     font = pygame.font.SysFont(None, 24)
@@ -120,15 +123,7 @@ def trait_picker_scene():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
                 pass
-            if event.key == pygame.K_i:
-                i += 1
-                j += 1
-                k += 1
-
-                if i > 4:
-                    i = 0
-                    j = 0
-                    k = 0
+            
 
                 
 
