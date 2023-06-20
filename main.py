@@ -22,7 +22,29 @@ base_x = 128
 base_y = 64
 vec = 364
 
+class Player():
 
+    def __init__(self, nationality, personality, game_class, picture):
+        self.nationality = nationality
+        self.personality = personality
+        self.game_class = game_class
+        self.picture = picture
+
+        # respawn position
+        self.x = 1280/2
+        self.y = 720/2
+
+    # method to print out the state of our player
+    def __str__(self) -> str:
+        return f"{self.nationality} {self.personality} {self.game_class} on position {self.x}, {self.y}"
+
+    def shoot(self):
+        print(f"{self.nationality} {self.personality} {self.game_class} has shot!")
+        
+
+
+class Enemy():
+    pass
 
 def welcome_scene():
     screen.fill("black")
@@ -55,7 +77,7 @@ def trait_picker_scene():
     # pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
     pygame.draw.rect(screen, "black", [base_x + (vec), base_y, 300, 500], 4)
     # pygame.draw.rect(screen, "black", [base_x + 2*(vec), base_y, 300, 500], 4)
-    pygame.draw.line(screen, "red", [640, 0], [640, 720], 1)
+    # pygame.draw.line(screen, "red", [640, 0], [640, 720], 1)
     
     spacing = 18
     y_vec = 50
@@ -96,6 +118,14 @@ def trait_picker_scene():
     screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + (spacing*2) + y_vec ))
 
 
+    font = pygame.font.SysFont(None, 50)
+    img = font.render(f'PRESS SPACE TO START', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)- 200, base_y+(500/2) + y_vec + 250))
+    font = pygame.font.SysFont(None, 25)
+    img = font.render(f'W, A, S, D to move, arrow keys to shoot', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)- 160, base_y+(500/2) + y_vec + 285))
+
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -131,11 +161,16 @@ def trait_picker_scene():
                     picture_index = 0
             imp = pygame.image.load(rf"img\birds\100\{pictures[picture_index]}").convert_alpha()
             screen.blit(imp, (base_x + (vec) + (300/2) - 50, base_y+(500/2) + y_vec - 150))
-
-
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_e:
-                pass
+            if event.key == pygame.K_SPACE:
+                global scene, player
+                player = Player(nations[i], personalities[j], classes[k], pictures[picture_index])
+                # print(player)
+                scene = "game"
+                
+                # create the player object
+                # change the scene
+
             
 
                 
@@ -154,19 +189,19 @@ while running:
         welcome_scene()
     if scene == "trait_picker":
         trait_picker_scene()
+    if scene == "game":
+        print(player)
         
     
 
 
             
-        
 
-    # RENDER YOUR GAME HERE
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    # ticks changed in order to have more responsive interface
-    clock.tick(60)  # limits FPS to 144
+    # ticks can be changed in order to have more responsive interface
+    clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
