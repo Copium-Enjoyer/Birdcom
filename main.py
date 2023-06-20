@@ -1,5 +1,12 @@
 # Example file showing a basic pygame "game loop"
 import pygame
+import sys
+
+classes = ["Ranger", "Specialist", "Sniper", "Bruiser", "Hunter"]
+nations = ["French", "Polish", "German", "American", "Australian"]
+personalities = ["Timid", "Brave", "Calm", "Cautious", "Obsessive"]
+# these are indexes for looping through the lists above
+i, j, k = 0, 0, 0 
 
 # pygame setup
 pygame.init()
@@ -7,48 +14,151 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 
+# ["welcome", "trait_picker", "game", "the_end"]
+scene = "welcome"
+base_x = 128
+base_y = 64
+vec = 364
+
+
+
+def welcome_scene():
+    screen.fill("black")
+    font = pygame.font.SysFont(None, 54)
+    img = font.render(f'Hello', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)-150, base_y+(500/2)))
+    font = pygame.font.SysFont(None, 38)
+    img = font.render(f'Press any key to continue', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)-150, base_y+(500/2) + 38 + 10))
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos=pygame.mouse.get_pos()
+            btn=pygame.mouse
+            print ("x = {}, y = {}".format(pos[0], pos[1]))
+        if event.type == pygame.KEYDOWN:
+            global scene
+            scene = "trait_picker"
+                
+            
+
+def trait_picker_scene():
+    global i, j, k
+    # fill the screen with a color to wipe away anything from last frame
+    screen.fill("white")
+
+    # pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
+    pygame.draw.rect(screen, "black", [base_x + (vec), base_y, 300, 500], 4)
+    # pygame.draw.rect(screen, "black", [base_x + 2*(vec), base_y, 300, 500], 4)
+    pygame.draw.line(screen, "red", [640, 0], [640, 720], 1)
+    
+    spacing = 18
+    y_vec = 50
+
+
+    # render fonts for the customization of a character
+    font = pygame.font.SysFont(None, 24)
+    img = font.render(f'Nationality:  {nations[i]}', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)-100, base_y+(500/2) + y_vec))
+
+    font = pygame.font.SysFont(None, 24)
+    img = font.render(f'Personality: {personalities[j]}', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)-100, base_y+(500/2) + (spacing)+ y_vec))
+
+    font = pygame.font.SysFont(None, 24)
+    img = font.render('Class:' + 13*" " + f'{classes[k]}', True, "blue")
+    screen.blit(img, (base_x + (vec) + (300/2)-100, base_y+(500/2) + (spacing*2) + y_vec ))
+    
+    # render buttons for the customization
+    button_vec = 90
+
+    # plus
+    font = pygame.font.SysFont(None, 24)
+    img = font.render(f'[+]', True, "black")
+    screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + y_vec))
+
+    font = pygame.font.SysFont(None, 24)
+    img = font.render(f'[+]', True, "black")
+    screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + (spacing) + y_vec ))
+    
+    font = pygame.font.SysFont(None, 24)
+    img = font.render(f'[+]', True, "black")
+    screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + (spacing*2) + y_vec ))
+
+
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos=pygame.mouse.get_pos()
+            btn=pygame.mouse
+            print ("x = {}, y = {}".format(pos[0], pos[1]))
+
+            # i - class, j - nationality, k - personality
+            if 750 >= pos[0] >= 725 and 375 >= pos[1] >= 355:
+                i += 1
+                if i > 4:
+                    i = 0
+            if 750 >= pos[0] >= 725 and 396 >= pos[1] >= 380:
+                j += 1
+                if j > 4:
+                    j = 0
+            if 750 >= pos[0] >= 725 and 415 >= pos[1] >= 400:
+                k += 1
+                if k > 4:
+                    k = 0
+
+
+            # if position is going to be in area of buttons we'll change the values
+
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_e:
+                pass
+            if event.key == pygame.K_i:
+                i += 1
+                j += 1
+                k += 1
+
+                if i > 4:
+                    i = 0
+                    j = 0
+                    k = 0
+
+                
+
+
+
+
 
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    screen.fill(0)
 
-    base_x = 128
-    base_y = 64
-    vec = 364
-    pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
-    pygame.draw.rect(screen, "black", [base_x + (vec), base_y, 300, 500], 4)
-    pygame.draw.rect(screen, "black", [base_x + 2*(vec), base_y, 300, 500], 4)
-    pygame.draw.line(screen, "red", [640, 0], [640, 720], 1)
-
-
-    if pygame.mouse.get_pressed():
-        menu_option_vec = 18
-
-        font = pygame.font.SysFont(None, 24)
-        img = font.render(f'Nationality: Polish', True, "blue")
-        screen.blit(img, (base_x + (vec) + (300/2)-72, base_y+(500/2)))
-
-        font = pygame.font.SysFont(None, 24)
-        img = font.render(f'Personality: Timid', True, "blue")
-        screen.blit(img, (base_x + (vec) + (300/2)-72, base_y+(500/2) + (menu_option_vec)))
-
-        font = pygame.font.SysFont(None, 24)
-        img = font.render(f'Class: Ranger', True, "blue")
-        screen.blit(img, (base_x + (vec) + (300/2)-72, base_y+(500/2) + (menu_option_vec*2)))
-        # pygame.draw.rect(screen, "black", [base_x, base_y, 300, 500], 4)
+    if scene == "welcome":
+        welcome_scene()
+    if scene == "trait_picker":
+        trait_picker_scene()
+        
     
+
+
+            
+        
 
     # RENDER YOUR GAME HERE
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    clock.tick(60)  # limits FPS to 60
+    # ticks changed in order to have more responsive interface
+    clock.tick(60)  # limits FPS to 144
 
 pygame.quit()
