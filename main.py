@@ -1,12 +1,14 @@
 # Example file showing a basic pygame "game loop"
 import pygame
 import sys
+import os
 
 classes = ["Ranger", "Specialist", "Sniper", "Bruiser", "Hunter"]
 nations = ["French", "Polish", "German", "American", "Australian"]
 personalities = ["Timid", "Brave", "Calm", "Cautious", "Obsessive"]
 # these are indexes for looping through the lists above
 i, j, k = 0, 0, 0 
+picture_index = 0
 
 # pygame setup
 pygame.init()
@@ -46,7 +48,7 @@ def welcome_scene():
             
 
 def trait_picker_scene():
-    global i, j, k
+    global i, j, k, picture_index
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("white")
 
@@ -59,8 +61,10 @@ def trait_picker_scene():
     y_vec = 50
 
     
+    pictures = os.listdir(r"img\birds\100")
     # render the profile picture of a character
-    
+    imp = pygame.image.load(rf"img\birds\100\{pictures[picture_index]}").convert_alpha()
+    screen.blit(imp, (base_x + (vec) + (300/2) - 50, base_y+(500/2) + y_vec - 150))
 
     # render fonts for the customization of a character
     font = pygame.font.SysFont(None, 24)
@@ -101,23 +105,32 @@ def trait_picker_scene():
             pos=pygame.mouse.get_pos()
             btn=pygame.mouse
             print ("x = {}, y = {}".format(pos[0], pos[1]))
-
+            # if position is going to be in area of buttons we'll change the values
             # i - class, j - nationality, k - personality
             if 750 >= pos[0] >= 725 and 375 >= pos[1] >= 355:
                 i += 1
                 if i > 4:
                     i = 0
+                picture_index += 1
+                if picture_index > len(pictures)-1:
+                    picture_index = 0
+                
             if 750 >= pos[0] >= 725 and 396 >= pos[1] >= 380:
                 j += 1
                 if j > 4:
                     j = 0
+                picture_index += 1
+                if picture_index > len(pictures)-1:
+                    picture_index = 0
             if 750 >= pos[0] >= 725 and 415 >= pos[1] >= 400:
                 k += 1
                 if k > 4:
                     k = 0
-
-
-            # if position is going to be in area of buttons we'll change the values
+                picture_index += 1
+                if picture_index > len(pictures)-1:
+                    picture_index = 0
+            imp = pygame.image.load(rf"img\birds\100\{pictures[picture_index]}").convert_alpha()
+            screen.blit(imp, (base_x + (vec) + (300/2) - 50, base_y+(500/2) + y_vec - 150))
 
 
         if event.type == pygame.KEYDOWN:
