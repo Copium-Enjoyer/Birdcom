@@ -23,6 +23,7 @@ shots, enemies = [], []
 last = 0
 last_spawn = 0
 score = 0
+result = "not_decided"
 
 # ["welcome", "trait_picker", "game", "the_end"]
 scene = "welcome"
@@ -211,6 +212,9 @@ def trait_picker_scene():
     font = pygame.font.SysFont(None, 25)
     img = font.render(f'W, A, S, D to move, arrow keys to shoot', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)- 160, base_y+(500/2) + y_vec + 285))
+    font = pygame.font.SysFont(None, 25)
+    img = font.render(f'Kill 100 insects', True, font_color)
+    screen.blit(img, (base_x + (vec) + (300/2)- 70, base_y+(500/2) + y_vec + 315))
 
 
 
@@ -331,6 +335,35 @@ def game_scene():
         player.y += player.speed
             
     
+def the_end():
+    global enemies, shots, result, screen
+    shots, enemies = [], []
+
+    screen.fill(0)
+    
+    font = pygame.font.SysFont(None, 30)
+    # bg = pygame.image.load(r"img\backgrounds\Background_1.png")
+    # screen.blit(bg, (0, 0))
+    
+
+
+    if result == "win":
+        img = font.render(f'Great job, {player}!', True, "white")
+        screen.blit(img, (base_x + (vec) + (300/2)-300, base_y+(500/2) + 38 + 10))
+        img = font.render(f'You have slain 100 enemies and freed yourself!', True, "white")
+        screen.blit(img, (base_x + (vec) + (300/2)-300, base_y+(500/2) + 38 + 10 + 60))
+        
+        
+    if result == "loss":
+
+        img = font.render(f'Unfortunately, {player}!', True, "white")
+        screen.blit(img, (base_x + (vec) + (300/2)-300, base_y+(500/2) + 38 + 10))
+        img = font.render(f'You have lost against the insects, try again next time.', True, "white")
+        screen.blit(img, (base_x + (vec) + (300/2)-300, base_y+(500/2) + 38 + 10 + 60))
+        
+
+    
+
 
 
 # main loop
@@ -347,43 +380,54 @@ while running:
     if scene == "game":
         # print(player)
         game_scene()
-        
-    
-    
-    if shots:
-        for shot in shots:
-            shot.update_trajectory()
-            if enemies:
-                for enemy in enemies:
-                    if enemy.x + enemy.hitbox > shot.x > enemy.x and enemy.y + enemy.hitbox > shot.y > enemy.y:
-                        score += 1
-                        # print(f"{player} has slain the enemy! {100 - score} left to escape!")
-                        enemies.remove(enemy)
-                        del enemy
+        if shots:
+            for shot in shots:
+                shot.update_trajectory()
+                if enemies:
+                    for enemy in enemies:
+                        if enemy.x + enemy.hitbox > shot.x > enemy.x and enemy.y + enemy.hitbox > shot.y > enemy.y:
+                            score += 1
+                            # print(f"{player} has slain the enemy! {100 - score} left to escape!")
+                            enemies.remove(enemy)
+                            del enemy
 
-            if not (1280 >= shot.x >= 0 and 720 >= shot.y >= 0):
-                # this line removes the shot from the shots list
-                shots.remove(shot)
+                if not (1280 >= shot.x >= 0 and 720 >= shot.y >= 0):
+                    # this line removes the shot from the shots list
+                    shots.remove(shot)
 
-                # this should remove the shot from the program
-                del shot
-                # print(shots)
+                    # this should remove the shot from the program
+                    del shot
+                    # print(shots)
                 
-    if enemies:
-        for enemy in enemies:
-            enemy.update_position()
+        if enemies:
+            for enemy in enemies:
+                enemy.update_position()
 
-            if enemy.x + enemy.hitbox >= player.x >= enemy.x and enemy.y + enemy.hitbox >= player.y >= enemy.y:
-                print("Game Over!")
+                if enemy.x + enemy.hitbox >= player.x >= enemy.x and enemy.y + enemy.hitbox >= player.y >= enemy.y:
+                    scene = "the_end"
+                    result = "loss"
+                    the_end()
+                    break
 
 
-            if not (1280 >= enemy.x >= 0 and 720 >= enemy.y >= 0):
-                enemies.remove(enemy)
-                del enemy
+                if not (1280 >= enemy.x >= 0 and 720 >= enemy.y >= 0):
+                    enemies.remove(enemy)
+                    del enemy
 
-                # print(enemies)
+                    # print(enemies)
 
+        if score == 100:
+            scene = "the_end"
+            result = "win"
+            the_end()
+            break
+    if scene == "the_end":
+        the_end()
+            
+    
         
+    
+
 
     # flip() the display to put your work on screen
     pygame.display.update()
