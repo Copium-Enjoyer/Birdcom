@@ -17,6 +17,10 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 
+
+shots, enemies = [], []
+last = 0
+
 # ["welcome", "trait_picker", "game", "the_end"]
 scene = "welcome"
 base_x = 128
@@ -34,6 +38,9 @@ class Player():
         # respawn position
         self.x = 1280/2
         self.y = 720/2
+        self.speed = 5
+
+        self.hitbox = 100
 
     # method to print out the state of our player
     def __str__(self) -> str:
@@ -45,11 +52,46 @@ class Player():
 
 class Shot():
 
-    def __init__(self) -> None:
+    shot_pictures = os.listdir(r"img\shots")
+
+    def __init__(self, x, y, direction) -> None:
+        self.x = x
+        self.y = y
+        self.direction = direction
+        self.picture = random.choice(Shot.shot_pictures)
+        self.picture_path = rf"img\shots\{self.picture}"
+        self.velocity = 10
+
+        self.hitbox = 48
+
+        self.update_trajectory()
+    
+    def update_trajectory(self):
         
+        if self.direction == "up":
+            self.y -= self.velocity
+        if self.direction == "down":
+            self.y += self.velocity
+        if self.direction == "left":
+            self.x -= self.velocity
+        if self.direction == "right":
+            self.x += self.velocity
+
+        self.draw()
+        
+        
+
+        
+        
+    def draw(self):
+        imp = pygame.image.load(self.picture_path).convert_alpha()
+        screen.blit(imp, (self.x, self.y))
+
 
 class Enemy():
     
+    def __init__(self) -> None:
+        pass
 
 
 
@@ -178,9 +220,12 @@ def trait_picker_scene():
                 # create the player object
                 # change the scene
 
-            
+
+
 
 def game_scene():
+    global shots, last
+    
     # set background
 
     # spawn player
@@ -200,30 +245,36 @@ def game_scene():
             print ("x = {}, y = {}".format(pos[0], pos[1]))
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        print("left")
-    if keys[pygame.K_RIGHT]:
-        print("right")
-    if keys[pygame.K_UP]:
-        print("up")
-    if keys[pygame.K_DOWN]:
-        print("down")
+
+    # 120 ticks needs to pass in order to shoot again
+    shooting_cooldown = 180
+    now = pygame.time.get_ticks()
+    if now - last >= shooting_cooldown:
+
+        if keys[pygame.K_LEFT]:
+            shots.append(Shot(player.x, player.y, "left"))
+            last = pygame.time.get_ticks()
+        if keys[pygame.K_RIGHT]:
+            shots.append(Shot(player.x, player.y, "right"))
+            last = pygame.time.get_ticks()
+        if keys[pygame.K_UP]:
+            shots.append(Shot(player.x, player.y, "up"))
+            last = pygame.time.get_ticks()
+        if keys[pygame.K_DOWN]:
+            shots.append(Shot(player.x, player.y, "down"))
+            last = pygame.time.get_ticks()
+
+
     if keys[pygame.K_a]:
-        player.x -= 1
-        print(player)
+        player.x -= player.speed
     if keys[pygame.K_d]:
-        player.x += 1
+        player.x += player.speed
     if keys[pygame.K_w]:
-        player.y -= 1
+        player.y -= player.speed
     if keys[pygame.K_s]:
-        player.y += 1
+        player.y += player.speed
             
-                
-
-
-                
-
-
+    
 
 
 # main loop
@@ -241,11 +292,28 @@ while running:
         # print(player)
         game_scene()
         
+
+    for shot in shots:
+        shot.update_trajectory()
+        if not (1280 > shot.x > 0 and 720 > shot.y > 0):
+            # this line removes the shot from the shots list
+            shots.remove(shot)
+
+            # this should remove the shot from the program
+            del shot
+            print(shots)
+
+    for enemy in enemies:
+        pass
+
     # flip() the display to put your work on screen
     pygame.display.update()
     pygame.display.flip()
 
+
+    # print(pygame.time.get_ticks())
+
     # ticks can be changed in order to have more responsive interface
-    clock.tick(144)  # limits FPS to 60
+    clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
