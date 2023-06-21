@@ -3,6 +3,7 @@ import pygame
 import sys
 import os
 import random
+import math
 
 classes = ["Ranger", "Specialist", "Sniper", "Bruiser", "Hunter"]
 nations = ["French", "Polish", "German", "American", "Australian"]
@@ -20,6 +21,8 @@ running = True
 
 shots, enemies = [], []
 last = 0
+last_spawn = 0
+score = 0
 
 # ["welcome", "trait_picker", "game", "the_end"]
 scene = "welcome"
@@ -89,19 +92,53 @@ class Shot():
 
 
 class Enemy():
-    
-    def __init__(self) -> None:
-        pass
 
+    enemy_pictures = os.listdir(r"img\enemies")
+    
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+        self.picture = random.choice(Enemy.enemy_pictures)
+        self.picture_path = rf"img\enemies\{self.picture}"
+        self.speed = 4
+        self.hitbox = 100
+
+        self.update_position()
+
+    def update_position(self):
+        
+        self.direction = random.choice(["up", "down", "left", "right"])
+
+        if self.direction == "up":
+            self.y -= self.speed
+        if self.direction == "down":
+            self.y += self.speed
+        if self.direction == "left":
+            self.x -= self.speed
+        if self.direction == "right":
+            self.x += self.speed
+
+        self.draw()
+
+    def draw(self):
+        imp = pygame.image.load(self.picture_path).convert_alpha()
+        screen.blit(imp, (self.x, self.y))
+
+    
 
 
 def welcome_scene():
-    screen.fill("black")
+
+    bg = pygame.image.load(r"img\backgrounds\Background_0.png")
+    screen.blit(bg, (0, 0))
+    
+    font_color = (64, 44, 222)
+
     font = pygame.font.SysFont(None, 54)
-    img = font.render(f'Hello', True, "blue")
+    img = font.render(f'Hello', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)-150, base_y+(500/2)))
     font = pygame.font.SysFont(None, 38)
-    img = font.render(f'Press any key to continue', True, "blue")
+    img = font.render(f'Press any key to continue', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)-150, base_y+(500/2) + 38 + 10))
 
     for event in pygame.event.get():
@@ -131,6 +168,7 @@ def trait_picker_scene():
     spacing = 18
     y_vec = 50
 
+    font_color = (131, 169, 110)
     
     pictures = os.listdir(r"img\birds\100")
     # render the profile picture of a character
@@ -139,15 +177,15 @@ def trait_picker_scene():
 
     # render fonts for the customization of a character
     font = pygame.font.SysFont(None, 24)
-    img = font.render(f'Nationality:  {nations[i]}', True, "blue")
+    img = font.render(f'Nationality:  {nations[i]}', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)-100, base_y+(500/2) + y_vec))
 
     font = pygame.font.SysFont(None, 24)
-    img = font.render(f'Personality: {personalities[j]}', True, "blue")
+    img = font.render(f'Personality: {personalities[j]}', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)-100, base_y+(500/2) + (spacing)+ y_vec))
 
     font = pygame.font.SysFont(None, 24)
-    img = font.render('Class:' + 13*" " + f'{classes[k]}', True, "blue")
+    img = font.render('Class:' + 13*" " + f'{classes[k]}', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)-100, base_y+(500/2) + (spacing*2) + y_vec ))
     
     # render buttons for the customization
@@ -155,23 +193,23 @@ def trait_picker_scene():
 
     # plus
     font = pygame.font.SysFont(None, 24)
-    img = font.render(f'[+]', True, "black")
+    img = font.render(f'[+]', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + y_vec))
 
     font = pygame.font.SysFont(None, 24)
-    img = font.render(f'[+]', True, "black")
+    img = font.render(f'[+]', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + (spacing) + y_vec ))
     
     font = pygame.font.SysFont(None, 24)
-    img = font.render(f'[+]', True, "black")
+    img = font.render(f'[+]', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2) + button_vec, base_y+(500/2) + (spacing*2) + y_vec ))
 
 
     font = pygame.font.SysFont(None, 50)
-    img = font.render(f'PRESS SPACE TO START', True, "blue")
+    img = font.render(f'PRESS SPACE TO START', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)- 200, base_y+(500/2) + y_vec + 250))
     font = pygame.font.SysFont(None, 25)
-    img = font.render(f'W, A, S, D to move, arrow keys to shoot', True, "blue")
+    img = font.render(f'W, A, S, D to move, arrow keys to shoot', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)- 160, base_y+(500/2) + y_vec + 285))
 
 
@@ -224,15 +262,33 @@ def trait_picker_scene():
 
 
 def game_scene():
-    global shots, last
+    global shots, last, last_spawn, enemies
     
     # set background
+    bg = pygame.image.load(r"img\backgrounds\Background_1.png")
+    screen.blit(bg, (0, 0))
+    
+    
 
     # spawn player
     imp = pygame.image.load(rf"img\birds\100\{player.picture}").convert_alpha()
     screen.blit(imp, (player.x, player.y))
 
     # spawn enemies
+    enemy_spawn_cooldown = 1000*random.uniform(0.3, 0.9)
+    now = pygame.time.get_ticks()
+    if now - last_spawn >= enemy_spawn_cooldown:
+
+        spawn_x, spawn_y = random.randint(0, 1200), random.randint(0, 720)
+
+        # this will make sure that enemies do not spawn on us
+        while math.dist([player.x, player.y], [spawn_x, spawn_y]) < 200:
+            spawn_x, spawn_y = random.randint(0, 1200), random.randint(0, 720)
+        
+        enemies.append(Enemy(spawn_x, spawn_y))
+        last_spawn = pygame.time.get_ticks()
+
+
 
     # player input
     for event in pygame.event.get():
@@ -242,11 +298,11 @@ def game_scene():
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos=pygame.mouse.get_pos()
             btn=pygame.mouse
-            print ("x = {}, y = {}".format(pos[0], pos[1]))
+            # print ("x = {}, y = {}".format(pos[0], pos[1]))
 
     keys = pygame.key.get_pressed()
 
-    # 120 ticks needs to pass in order to shoot again
+    # 180 ticks need to pass in order to shoot again
     shooting_cooldown = 180
     now = pygame.time.get_ticks()
     if now - last >= shooting_cooldown:
@@ -292,19 +348,42 @@ while running:
         # print(player)
         game_scene()
         
+    
+    
+    if shots:
+        for shot in shots:
+            shot.update_trajectory()
+            if enemies:
+                for enemy in enemies:
+                    if enemy.x + enemy.hitbox > shot.x > enemy.x and enemy.y + enemy.hitbox > shot.y > enemy.y:
+                        score += 1
+                        # print(f"{player} has slain the enemy! {100 - score} left to escape!")
+                        enemies.remove(enemy)
+                        del enemy
 
-    for shot in shots:
-        shot.update_trajectory()
-        if not (1280 > shot.x > 0 and 720 > shot.y > 0):
-            # this line removes the shot from the shots list
-            shots.remove(shot)
+            if not (1280 >= shot.x >= 0 and 720 >= shot.y >= 0):
+                # this line removes the shot from the shots list
+                shots.remove(shot)
 
-            # this should remove the shot from the program
-            del shot
-            print(shots)
+                # this should remove the shot from the program
+                del shot
+                # print(shots)
+                
+    if enemies:
+        for enemy in enemies:
+            enemy.update_position()
 
-    for enemy in enemies:
-        pass
+            if enemy.x + enemy.hitbox >= player.x >= enemy.x and enemy.y + enemy.hitbox >= player.y >= enemy.y:
+                print("Game Over!")
+
+
+            if not (1280 >= enemy.x >= 0 and 720 >= enemy.y >= 0):
+                enemies.remove(enemy)
+                del enemy
+
+                # print(enemies)
+
+        
 
     # flip() the display to put your work on screen
     pygame.display.update()
@@ -314,6 +393,6 @@ while running:
     # print(pygame.time.get_ticks())
 
     # ticks can be changed in order to have more responsive interface
-    clock.tick(60)  # limits FPS to 60
+    clock.tick(256)  # limits FPS to 60
 
 pygame.quit()
