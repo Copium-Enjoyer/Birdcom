@@ -213,7 +213,7 @@ def trait_picker_scene():
     img = font.render(f'W, A, S, D to move, arrow keys to shoot', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)- 160, base_y+(500/2) + y_vec + 285))
     font = pygame.font.SysFont(None, 25)
-    img = font.render(f'Kill 100 insects', True, font_color)
+    img = font.render(f'Kill 50 insects', True, font_color)
     screen.blit(img, (base_x + (vec) + (300/2)- 70, base_y+(500/2) + y_vec + 315))
 
 
@@ -350,7 +350,7 @@ def the_end():
     if result == "win":
         img = font.render(f'Great job, {player}!', True, "white")
         screen.blit(img, (base_x + (vec) + (300/2)-300, base_y+(500/2) + 38 + 10))
-        img = font.render(f'You have slain 100 enemies and freed yourself!', True, "white")
+        img = font.render(f'You have slain 50 enemies and freed yourself!', True, "white")
         screen.blit(img, (base_x + (vec) + (300/2)-300, base_y+(500/2) + 38 + 10 + 60))
         
         
@@ -380,6 +380,7 @@ while running:
     if scene == "game":
         # print(player)
         game_scene()
+    
         if shots:
             for shot in shots:
                 shot.update_trajectory()
@@ -407,7 +408,7 @@ while running:
                     scene = "the_end"
                     result = "loss"
                     the_end()
-                    break
+                    
 
 
                 if not (1280 >= enemy.x >= 0 and 720 >= enemy.y >= 0):
@@ -416,11 +417,15 @@ while running:
 
                     # print(enemies)
 
-        if score == 100:
+        font = pygame.font.SysFont(None, 30)            
+        img = font.render(f'Score: {score}', True, "white")
+        screen.blit(img, (20, 20))
+
+        if score == 50:
             scene = "the_end"
             result = "win"
             the_end()
-            break
+            
     if scene == "the_end":
         the_end()
             
