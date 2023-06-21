@@ -2,6 +2,7 @@
 import pygame
 import sys
 import os
+import random
 
 classes = ["Ranger", "Specialist", "Sniper", "Bruiser", "Hunter"]
 nations = ["French", "Polish", "German", "American", "Australian"]
@@ -24,7 +25,7 @@ vec = 364
 
 class Player():
 
-    def __init__(self, nationality, personality, game_class, picture):
+    def __init__(self, nationality, personality, game_class, picture) -> None:
         self.nationality = nationality
         self.personality = personality
         self.game_class = game_class
@@ -42,9 +43,15 @@ class Player():
         print(f"{self.nationality} {self.personality} {self.game_class} has shot!")
         
 
+class Shot():
+
+    def __init__(self) -> None:
+        
 
 class Enemy():
-    pass
+    
+
+
 
 def welcome_scene():
     screen.fill("black")
@@ -173,12 +180,53 @@ def trait_picker_scene():
 
             
 
+def game_scene():
+    # set background
+
+    # spawn player
+    imp = pygame.image.load(rf"img\birds\100\{player.picture}").convert_alpha()
+    screen.blit(imp, (player.x, player.y))
+
+    # spawn enemies
+
+    # player input
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos=pygame.mouse.get_pos()
+            btn=pygame.mouse
+            print ("x = {}, y = {}".format(pos[0], pos[1]))
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        print("left")
+    if keys[pygame.K_RIGHT]:
+        print("right")
+    if keys[pygame.K_UP]:
+        print("up")
+    if keys[pygame.K_DOWN]:
+        print("down")
+    if keys[pygame.K_a]:
+        player.x -= 1
+        print(player)
+    if keys[pygame.K_d]:
+        player.x += 1
+    if keys[pygame.K_w]:
+        player.y -= 1
+    if keys[pygame.K_s]:
+        player.y += 1
+            
+                
+
+
                 
 
 
 
 
-
+# main loop
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -190,18 +238,14 @@ while running:
     if scene == "trait_picker":
         trait_picker_scene()
     if scene == "game":
-        print(player)
+        # print(player)
+        game_scene()
         
-    
-
-
-            
-
-
     # flip() the display to put your work on screen
+    pygame.display.update()
     pygame.display.flip()
 
     # ticks can be changed in order to have more responsive interface
-    clock.tick(60)  # limits FPS to 60
+    clock.tick(144)  # limits FPS to 60
 
 pygame.quit()
